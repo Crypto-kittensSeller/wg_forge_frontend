@@ -1,6 +1,7 @@
 import companies from '../data/companies.json';
 import orders from '../data/orders.json';
 import users from '../data/users.json';
+import './styles.css';
 const moment = require('moment');
 
 
@@ -45,12 +46,24 @@ class OrdersTable {
       const userOfCurrentOrder = users.find( user => {
         return order.user_id === user.id;
       });
+      const companyOfCurrentUser = companies.find( company => {
+        return userOfCurrentOrder.company_id === company.id
+      }) || '';
+      console.log(companyOfCurrentUser);
       const userInfo = generateUserName(userOfCurrentOrder);
+      const userBirthday = generateUserBirtday(userOfCurrentOrder);
+      
       info += `
       <tr id='order_${order.id}'>
         <td>${order.transaction_id}</td>
         <td class='user_data'>
-          <a href='#'>${userInfo}</a>
+          <a href='#' class='user-info'>${userInfo}</a>
+          <div class='user-details'>
+          <p>${userBirthday || ''}</p>
+          <p><img src="${userOfCurrentOrder.avatar}" width='100px' alt='avatar'></p>
+          <p>Company: <a href="${companyOfCurrentUser.url || 'n/a'}" target='_blank'>${companyOfCurrentUser.title || 'n/a'}</a></p>
+          <p>Industry: ${companyOfCurrentUser.sector || 'n/a'}</p>
+          </div>
         </td>
         <td>${formattedOrderDate}</td>
         <td>$${order.total}</td>
@@ -72,5 +85,19 @@ function generateUserName(userOfCurrentOrder) {
   return userInfo;
 }
 
+function generateUserBirtday(userOfCurrentOrder) {
+  if (!userOfCurrentOrder.birthday) return;
+  const userBirthday = moment(userOfCurrentOrder.birthday*1000);
+  const userFormattedBirthday = userBirthday.format('DD/MM/YYYY');
+  return userFormattedBirthday;
+}
+
 OrdersTable.renderTableHeaders();
 OrdersTable.renderTableBody();
+
+const table = document.getElementsByTagName('table')[0];
+table.addEventListener('click', (e) => {
+  if (e.target.className != 'user-info') return;
+  e.preventDefault();
+  e.target.nextSibling.nextSibling.classList.toggle('user-details');
+})
