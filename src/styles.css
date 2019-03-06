@@ -1,3 +1,7 @@
 div.user-details {
     display: none;
 }
+
+.clickable:hover {
+	cursor: pointer;
+}

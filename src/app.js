@@ -2,6 +2,7 @@ import companies from '../data/companies.json';
 import orders from '../data/orders.json';
 import users from '../data/users.json';
 import './styles.css';
+import sortTable from './sorter.js'
 const moment = require('moment');
 
 
@@ -11,15 +12,15 @@ class OrdersTable {
     const mainContainer = document.getElementById('app');
     let info = `
         <table>
-          <thead>
+          <thead id='tableHeader'>
             <tr>
-                <th>Transaction ID</th>
-                <th>User Info</th>
-                <th>Order Date</th>
-                <th>Order Amount</th>
+                <th class='clickable' data-columnName='Transaction ID'>Transaction ID</th>
+                <th class='clickable' data-columnName='User Info'>User Info</th>
+                <th class='clickable' data-columnName='Order Date'>Order Date</th>
+                <th class='clickable' data-columnName='Order Amount'>Order Amount</th>
                 <th>Card Number</th>
-                <th>Card Type</th>
-                <th>Location</th>
+                <th class='clickable' data-columnName='Card Type'>Card Type</th>
+                <th class='clickable' data-columnName='Location'>Location</th>
             </tr>
           </thead>
           <tbody id='tableBody'>
@@ -49,7 +50,6 @@ class OrdersTable {
       const companyOfCurrentUser = companies.find( company => {
         return userOfCurrentOrder.company_id === company.id
       }) || '';
-      console.log(companyOfCurrentUser);
       const userInfo = generateUserName(userOfCurrentOrder);
       const userBirthday = generateUserBirtday(userOfCurrentOrder);
       
@@ -97,7 +97,21 @@ OrdersTable.renderTableBody();
 
 const table = document.getElementsByTagName('table')[0];
 table.addEventListener('click', (e) => {
-  if (e.target.className != 'user-info') return;
+  if (e.target.className !== 'user-info') return;
   e.preventDefault();
   e.target.nextSibling.nextSibling.classList.toggle('user-details');
+})
+
+const tableHeader = document.getElementById('tableHeader');
+tableHeader.addEventListener( 'click', (e) => {
+  if (e.target.className !== 'clickable') return;
+  const arrow = '<span>&#8595;</span>';
+  if (e.target.innerHTML.includes('span')) return;
+  tableHeader.children[0].childNodes.forEach( elem => {
+    if (elem.innerHTML){
+    if (elem.innerHTML.includes('span')) elem.innerHTML = elem.innerHTML.substr(0, elem.innerHTML.length - 14);
+    }
+  });
+  e.target.innerHTML += arrow;
+  sortTable(e.target.cellIndex, e.target.getAttribute('data-columnName'));
 })
