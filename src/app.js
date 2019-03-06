@@ -42,10 +42,16 @@ class OrdersTable {
         return number;
       });
       const cardNumber = hideMiddleNumbers.join('');
+      const userOfCurrentOrder = users.find( user => {
+        return order.user_id === user.id;
+      });
+      const userInfo = generateUserName(userOfCurrentOrder);
       info += `
       <tr id='order_${order.id}'>
         <td>${order.transaction_id}</td>
-        <td class='user_data'>${order.user_id}</td>
+        <td class='user_data'>
+          <a href='#'>${userInfo}</a>
+        </td>
         <td>${formattedOrderDate}</td>
         <td>$${order.total}</td>
         <td>${cardNumber}</td>
@@ -57,6 +63,14 @@ class OrdersTable {
     tbody.innerHTML = info;
   }
 };
+
+function generateUserName(userOfCurrentOrder) {
+  let prefix = '';
+  if (userOfCurrentOrder.gender === "Male") prefix = 'Mr.';
+  if (userOfCurrentOrder.gender === "Female") prefix = 'Ms.';
+  const userInfo = prefix + ' ' + userOfCurrentOrder.first_name + ' ' + userOfCurrentOrder.last_name;
+  return userInfo;
+}
 
 OrdersTable.renderTableHeaders();
 OrdersTable.renderTableBody();
