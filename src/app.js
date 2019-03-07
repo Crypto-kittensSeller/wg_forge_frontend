@@ -2,7 +2,8 @@ import companies from '../data/companies.json';
 import orders from '../data/orders.json';
 import users from '../data/users.json';
 import './styles.css';
-import sortTable from './sorter.js'
+import sortTable from './sorter.js';
+import generateStatistics from './statisticsGenerator.js';
 const moment = require('moment');
 
 
@@ -66,7 +67,7 @@ class OrdersTable {
           </div>
         </td>
         <td>${formattedOrderDate}</td>
-        <td>$${order.total}</td>
+        <td>$${order.total.replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td>
         <td>${cardNumber}</td>
         <td>${order.card_type}</td>
         <td>${order.order_country} (${order.order_ip})</td>
@@ -74,6 +75,35 @@ class OrdersTable {
     `
     })
     tbody.innerHTML = info;
+    const statisticsInfo = generateStatistics();
+
+     let statistics = `
+      <tr>
+      <td colspan='6'>Orders Count</td>
+      <td>${statisticsInfo.totalOrders}</td>
+  </tr>
+  <tr>
+      <td colspan='6'>Orders Total</td>
+      <td>$${statisticsInfo.totalSum}</td>
+  </tr>
+  <tr>
+      <td colspan='6'>Median Value</td>
+      <td>$${statisticsInfo.median()}</td>
+  </tr>
+  <tr>
+      <td colspan='6'>Average Check</td>
+      <td>$${statisticsInfo.averageCheck}</td>
+  </tr>
+  <tr>
+      <td colspan='6'>Average Check (Female)</td>
+      <td>$${statisticsInfo.averageFemaleCheck()}</td>
+  </tr>
+  <tr>
+      <td colspan='6'>Average Check (Male)</td>
+      <td>$${statisticsInfo.averageMaleCheck()}</td>
+  </tr>
+      `
+      tbody.innerHTML += statistics;   
   }
 };
 

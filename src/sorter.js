@@ -1,7 +1,14 @@
+import orders from '../data/orders.json';
+
+
 function sortTable(columnNumber, column) {
     const table = document.getElementsByTagName('table')[0];
     const tableBody = document.getElementsByTagName('tbody')[0];
-    const tableRows = [].slice.call(tableBody.rows);
+    console.log(tableBody.rows);
+    const tableAllRows = [].slice.call(tableBody.rows);
+    const statisticsRows = tableAllRows.slice(orders.length);
+    const tableRows = tableAllRows.slice(0,orders.length);
+    console.log(statisticsRows);
     let compare;
     switch (column) {
       case 'Order Amount':
@@ -50,13 +57,15 @@ function sortTable(columnNumber, column) {
         break;
     }
     tableRows.sort(compare);
-  
     table.removeChild(tableBody);
   
     tableRows.forEach(row => {
       tableBody.appendChild(row);
     });
-  
+    statisticsRows.forEach(row => {
+      tableBody.appendChild(row);
+    });
+
     table.appendChild(tableBody);
   }
 
