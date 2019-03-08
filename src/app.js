@@ -3,12 +3,11 @@ import orders from '../data/orders.json';
 import users from '../data/users.json';
 import './styles.css';
 import sortTable from './sorter.js';
-import generateStatistics from './statisticsGenerator.js';
+import renderStatistics from './statisticsGenerator.js';
 const moment = require('moment');
 
 
 class OrdersTable {
- 
   static renderTableHeaders() {
     const mainContainer = document.getElementById('app');
     let info = `
@@ -23,13 +22,16 @@ class OrdersTable {
                 <th class='clickable' data-columnName='Card Type'>Card Type</th>
                 <th class='clickable' data-columnName='Location'>Location</th>
             </tr>
+            <tr>
+              <th>Search:</th>
+              <th><input type='text' id='search'></th>
+            </tr>
           </thead>
           <tbody id='tableBody'>
           </tbody>
         </table>`;
       mainContainer.innerHTML = info;
     };
-
 
   static renderTableBody() {
     const tbody = document.getElementById('tableBody');
@@ -55,7 +57,7 @@ class OrdersTable {
       const userBirthday = generateUserBirtday(userOfCurrentOrder);
       
       info += `
-      <tr id='order_${order.id}'>
+      <tr id='order_${order.id}' style='display: table-row'>
         <td>${order.transaction_id}</td>
         <td class='user_data'>
           <a href='#' class='user-info'>${userInfo}</a>
@@ -67,7 +69,7 @@ class OrdersTable {
           </div>
         </td>
         <td>${formattedOrderDate}</td>
-        <td>$${order.total.replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td>
+        <td class='order_price-js'>$${order.total}</td>
         <td>${cardNumber}</td>
         <td>${order.card_type}</td>
         <td>${order.order_country} (${order.order_ip})</td>
@@ -75,35 +77,7 @@ class OrdersTable {
     `
     })
     tbody.innerHTML = info;
-    const statisticsInfo = generateStatistics();
-
-     let statistics = `
-      <tr>
-      <td colspan='6'>Orders Count</td>
-      <td>${statisticsInfo.totalOrders}</td>
-  </tr>
-  <tr>
-      <td colspan='6'>Orders Total</td>
-      <td>$${statisticsInfo.totalSum}</td>
-  </tr>
-  <tr>
-      <td colspan='6'>Median Value</td>
-      <td>$${statisticsInfo.median()}</td>
-  </tr>
-  <tr>
-      <td colspan='6'>Average Check</td>
-      <td>$${statisticsInfo.averageCheck}</td>
-  </tr>
-  <tr>
-      <td colspan='6'>Average Check (Female)</td>
-      <td>$${statisticsInfo.averageFemaleCheck()}</td>
-  </tr>
-  <tr>
-      <td colspan='6'>Average Check (Male)</td>
-      <td>$${statisticsInfo.averageMaleCheck()}</td>
-  </tr>
-      `
-      tbody.innerHTML += statistics;   
+    tbody.innerHTML += renderStatistics();   
   }
 };
 
@@ -144,4 +118,50 @@ tableHeader.addEventListener( 'click', (e) => {
   });
   e.target.innerHTML += arrow;
   sortTable(e.target.cellIndex, e.target.getAttribute('data-columnName'));
+})
+
+const search = document.getElementById('search');
+search.addEventListener('input', () => {
+  const tableBody = document.getElementsByTagName('tbody')[0]
+  const regPhrase = new RegExp(search.value, 'i');
+  let flag = false;
+  let smthFound = false;
+  for (let i = tableBody.children.length - 1; i >= 0; i--) {
+   if (tableBody.children[i].className === 'statistics-js') {
+    tableBody.removeChild(tableBody.children[i]);
+   };
+  }
+ 
+  if (tableBody.childNodes[1].id === 'notFound'){
+    const nothingFound = document.getElementById('notFound');
+    tableBody.removeChild(nothingFound);
+  }
+  for (let i = 0; i < orders.length; i++) { 
+    flag = false;
+    for (let j = tableBody.rows[i].cells.length - 1; j >= 0; j--) {
+      if (j === 1) {
+        flag = regPhrase.test(tableBody.rows[i].cells[1].childNodes[1].innerHTML);
+      } else {
+        flag = regPhrase.test(tableBody.rows[i].cells[j].innerHTML);
+      }
+      if (flag) break;
+    }
+    if (flag) {
+      tableBody.rows[i].style.display = 'table-row';
+      smthFound = true;
+    } else {
+        tableBody.rows[i].style.display = 'none';
+    }
+  }
+  if (!smthFound) {
+    const nothingFound = `
+      <tr id='notFound'>
+        <td colspan='7' >Nothing found</td>
+      </tr>
+      `
+    if (tableBody.childNodes[1].id !== 'notFound'){
+      tableBody.insertAdjacentHTML('afterbegin', nothingFound);
+    }
+  }
+  tableBody.innerHTML += renderStatistics();
 })
