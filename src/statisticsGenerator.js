@@ -115,55 +115,55 @@ function renderStatistics() {
   if (statisticsInfo.totalOrders() === 0) {
     statistics += `
       <tr class='statistics-js'>
-        <td colspan='6'>Orders Count</td>
-        <td><span>n/a</span></td>
+        <td class='bg-info' colspan='6'>Orders Count</td>
+        <td class='bg-info'><span>n/a</span></td>
       </tr>
       <tr class='statistics-js'>
-        <td colspan='6'>Orders Total</td>
-        <td><span>n/a</span></td>
+        <td class='bg-info' colspan='6'>Orders Total</td>
+        <td class='bg-info'><span>n/a</span></td>
       </tr>
       <tr class='statistics-js'>
-        <td colspan='6'>Median Value</td>
-        <td><span>n/a</span></td>
+        <td class='bg-info' colspan='6'>Median Value</td>
+        <td class='bg-info'><span>n/a</span></td>
       </tr>
       <tr class='statistics-js'>
-        <td colspan='6'>Average Check</td>
-        <td><span>n/a</span></td>
+        <td class='bg-info' colspan='6'>Average Check</td>
+        <td class='bg-info'><span>n/a</span></td>
       </tr>
       <tr class='statistics-js'>
-        <td colspan='6'>Average Check (Female)</td>
-        <td><span>n/a</span></td>
+        <td class='bg-info' colspan='6'>Average Check (Female)</td>
+        <td class='bg-info'><span>n/a</span></td>
       </tr>
       <tr class='statistics-js'>
-        <td colspan='6'>Average Check (Male)</td>
-        <td><span>n/a</span></td>
+        <td class='bg-info' colspan='6'>Average Check (Male)</td>
+        <td class='bg-info'><span>n/a</span></td>
       </tr>
       `
   } else {
     statistics += `
       <tr class='statistics-js'>
-        <td colspan='6'>Orders Count</td>
-        <td>${statisticsInfo.totalOrders()}</td>
+        <td class='bg-info' colspan='6'>Orders Count</td>
+        <td class='bg-info'>${statisticsInfo.totalOrders()}</td>
       </tr>
       <tr class='statistics-js'>
-        <td colspan='6'>Orders Total</td>
-        <td>$${statisticsInfo.totalSum()}</td>
+        <td class='bg-info' colspan='6'>Orders Total</td>
+        <td class='bg-info'>$${statisticsInfo.totalSum()}</td>
       </tr>
       <tr class='statistics-js'>
-        <td colspan='6'>Median Value</td>
-        <td>$${statisticsInfo.median()}</td>
+        <td class='bg-info' colspan='6'>Median Value</td>
+        <td class='bg-info'>$${statisticsInfo.median()}</td>
       </tr>
       <tr class='statistics-js'>
-        <td colspan='6'>Average Check</td>
-        <td>$${statisticsInfo.averageCheck}</td>
+        <td class='bg-info' colspan='6'>Average Check</td>
+        <td class='bg-info'>$${statisticsInfo.averageCheck}</td>
       </tr>
       <tr class='statistics-js'>
-        <td colspan='6'>Average Check (Female)</td>
-        <td>${statisticsInfo.averageFemaleCheck()}</td>
+        <td class='bg-info' colspan='6'>Average Check (Female)</td>
+        <td class='bg-info'>${statisticsInfo.averageFemaleCheck()}</td>
       </tr>
       <tr class='statistics-js'>
-        <td colspan='6'>Average Check (Male)</td>
-        <td>${statisticsInfo.averageMaleCheck()}</td>
+        <td class='bg-info' colspan='6'>Average Check (Male)</td>
+        <td class='bg-info'>${statisticsInfo.averageMaleCheck()}</td>
       </tr>
       `
   }

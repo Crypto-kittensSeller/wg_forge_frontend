@@ -1,9 +1,10 @@
 import companies from '../data/companies.json';
 import orders from '../data/orders.json';
 import users from '../data/users.json';
-import './styles.css';
+import './css/styles.css';
 import sortTable from './sorter.js';
 import renderStatistics from './statisticsGenerator.js';
+import 'bootstrap';
 const moment = require('moment');
 
 
@@ -11,9 +12,9 @@ class OrdersTable {
   static renderTableHeaders() {
     const mainContainer = document.getElementById('app');
     let info = `
-        <table>
+        <table class="table table-dark table-hover">
           <thead id='tableHeader'>
-            <tr>
+            <tr class="bg-primary">
                 <th class='clickable' data-columnName='Transaction ID'>Transaction ID</th>
                 <th class='clickable' data-columnName='User Info'>User Info</th>
                 <th class='clickable' data-columnName='Order Date'>Order Date</th>
@@ -24,7 +25,7 @@ class OrdersTable {
             </tr>
             <tr>
               <th>Search:</th>
-              <th><input type='text' id='search'></th>
+              <th colspan='6'><input type='text' id='search'></th>
             </tr>
           </thead>
           <tbody id='tableBody'>
@@ -155,7 +156,7 @@ search.addEventListener('input', () => {
   }
   if (!smthFound) {
     const nothingFound = `
-      <tr id='notFound'>
+      <tr id='notFound' class="bg-danger">
         <td colspan='7' >Nothing found</td>
       </tr>
       `
