@@ -2,16 +2,32 @@ import companies from '../data/companies.json';
 import orders from '../data/orders.json';
 import users from '../data/users.json';
 import './css/styles.css';
-import sortTable from './sorter.js';
-import renderStatistics from './statisticsGenerator.js';
+import sortTable from './sorter';
+import renderStatistics from './statisticsGenerator';
 import 'bootstrap';
+
 const moment = require('moment');
 
+
+function generateUserName(userOfCurrentOrder) {
+  let prefix = '';
+  if (userOfCurrentOrder.gender === 'Male') prefix = 'Mr.';
+  if (userOfCurrentOrder.gender === 'Female') prefix = 'Ms.';
+  const userInfo = `${prefix} ${userOfCurrentOrder.first_name} ${userOfCurrentOrder.last_name}`;
+  return userInfo;
+}
+
+function generateUserBirtday(userOfCurrentOrder) {
+  if (!userOfCurrentOrder.birthday) return;
+  const userBirthday = moment(userOfCurrentOrder.birthday * 1000);
+  const userFormattedBirthday = userBirthday.format('DD/MM/YYYY');
+  return userFormattedBirthday;
+}
 
 class OrdersTable {
   static renderTableHeaders() {
     const mainContainer = document.getElementById('app');
-    let info = `
+    const info = `
         <table class="table table-dark table-hover">
           <thead id='tableHeader'>
             <tr class="bg-primary">
@@ -31,32 +47,28 @@ class OrdersTable {
           <tbody id='tableBody'>
           </tbody>
         </table>`;
-      mainContainer.innerHTML = info;
-    };
+    mainContainer.innerHTML = info;
+  }
 
   static renderTableBody() {
     const tbody = document.getElementById('tableBody');
     let info = '';
-    orders.map( order => {
-      const orderDate = moment(order.created_at*1000);
+    orders.map((order) => {
+      const orderDate = moment(order.created_at * 1000);
       const formattedOrderDate = orderDate.format('DD/MM/YYYY hh:mm:ss');
-      const numbersArr = order.card_number.split("");
-      const hideMiddleNumbers = numbersArr.map( (number, i) => {
+      const numbersArr = order.card_number.split('');
+      const hideMiddleNumbers = numbersArr.map((number, i) => {
         if (i > 1 && i < (numbersArr.length - 4)) {
-         return number = '*';
+          number = '*';
+          return number;
         }
         return number;
       });
       const cardNumber = hideMiddleNumbers.join('');
-      const userOfCurrentOrder = users.find( user => {
-        return order.user_id === user.id;
-      });
-      const companyOfCurrentUser = companies.find( company => {
-        return userOfCurrentOrder.company_id === company.id
-      }) || '';
+      const userOfCurrentOrder = users.find(user => order.user_id === user.id);
+      const companyOfCurrentUser = companies.find(company => userOfCurrentOrder.company_id === company.id) || '';
       const userInfo = generateUserName(userOfCurrentOrder);
       const userBirthday = generateUserBirtday(userOfCurrentOrder);
-      
       info += `
       <tr id='order_${order.id}' style='display: table-row'>
         <td>${order.transaction_id}</td>
@@ -75,26 +87,11 @@ class OrdersTable {
         <td>${order.card_type}</td>
         <td>${order.order_country} (${order.order_ip})</td>
       </tr>
-    `
-    })
+    `;
+    });
     tbody.innerHTML = info;
-    tbody.innerHTML += renderStatistics();   
+    tbody.innerHTML += renderStatistics();
   }
-};
-
-function generateUserName(userOfCurrentOrder) {
-  let prefix = '';
-  if (userOfCurrentOrder.gender === "Male") prefix = 'Mr.';
-  if (userOfCurrentOrder.gender === "Female") prefix = 'Ms.';
-  const userInfo = prefix + ' ' + userOfCurrentOrder.first_name + ' ' + userOfCurrentOrder.last_name;
-  return userInfo;
-}
-
-function generateUserBirtday(userOfCurrentOrder) {
-  if (!userOfCurrentOrder.birthday) return;
-  const userBirthday = moment(userOfCurrentOrder.birthday*1000);
-  const userFormattedBirthday = userBirthday.format('DD/MM/YYYY');
-  return userFormattedBirthday;
 }
 
 OrdersTable.renderTableHeaders();
@@ -105,39 +102,38 @@ table.addEventListener('click', (e) => {
   if (e.target.className !== 'user-info') return;
   e.preventDefault();
   e.target.nextSibling.nextSibling.classList.toggle('user-details');
-})
+});
 
 const tableHeader = document.getElementById('tableHeader');
-tableHeader.addEventListener( 'click', (e) => {
+tableHeader.addEventListener('click', (e) => {
   if (e.target.className !== 'clickable') return;
   const arrow = '<span>&#8595;</span>';
   if (e.target.innerHTML.includes('span')) return;
-  tableHeader.children[0].childNodes.forEach( elem => {
-    if (elem.innerHTML){
-    if (elem.innerHTML.includes('span')) elem.innerHTML = elem.innerHTML.substr(0, elem.innerHTML.length - 14);
+  tableHeader.children[0].childNodes.forEach((elem) => {
+    if (elem.innerHTML) {
+      if (elem.innerHTML.includes('span')) elem.innerHTML = elem.innerHTML.substr(0, elem.innerHTML.length - 14);
     }
   });
   e.target.innerHTML += arrow;
   sortTable(e.target.cellIndex, e.target.getAttribute('data-columnName'));
-})
+});
 
 const search = document.getElementById('search');
 search.addEventListener('input', () => {
-  const tableBody = document.getElementsByTagName('tbody')[0]
+  const tableBody = document.getElementsByTagName('tbody')[0];
   const regPhrase = new RegExp(search.value, 'i');
   let flag = false;
   let smthFound = false;
   for (let i = tableBody.children.length - 1; i >= 0; i--) {
-   if (tableBody.children[i].className === 'statistics-js') {
-    tableBody.removeChild(tableBody.children[i]);
-   };
+    if (tableBody.children[i].className === 'statistics-js') {
+      tableBody.removeChild(tableBody.children[i]);
+    }
   }
- 
-  if (tableBody.childNodes[1].id === 'notFound'){
+  if (tableBody.childNodes[1].id === 'notFound') {
     const nothingFound = document.getElementById('notFound');
     tableBody.removeChild(nothingFound);
   }
-  for (let i = 0; i < orders.length; i++) { 
+  for (let i = 0; i < orders.length; i++) {
     flag = false;
     for (let j = tableBody.rows[i].cells.length - 1; j >= 0; j--) {
       if (j === 1) {
@@ -151,7 +147,7 @@ search.addEventListener('input', () => {
       tableBody.rows[i].style.display = 'table-row';
       smthFound = true;
     } else {
-        tableBody.rows[i].style.display = 'none';
+      tableBody.rows[i].style.display = 'none';
     }
   }
   if (!smthFound) {
@@ -159,10 +155,10 @@ search.addEventListener('input', () => {
       <tr id='notFound' class="bg-danger">
         <td class='notFound' colspan='7' >Nothing found</td>
       </tr>
-      `
-    if (tableBody.childNodes[1].id !== 'notFound'){
+      `;
+    if (tableBody.childNodes[1].id !== 'notFound') {
       tableBody.insertAdjacentHTML('afterbegin', nothingFound);
     }
   }
   tableBody.innerHTML += renderStatistics();
-})
+});
