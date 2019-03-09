@@ -69,9 +69,9 @@ class OrdersTable {
           <p>Industry: ${companyOfCurrentUser.sector || 'n/a'}</p>
           </div>
         </td>
-        <td>${formattedOrderDate}</td>
+        <td class='order_date'>${formattedOrderDate}</td>
         <td class='order_price-js'>$${order.total}</td>
-        <td>${cardNumber}</td>
+        <td class='card_number'>${cardNumber}</td>
         <td>${order.card_type}</td>
         <td>${order.order_country} (${order.order_ip})</td>
       </tr>
@@ -157,7 +157,7 @@ search.addEventListener('input', () => {
   if (!smthFound) {
     const nothingFound = `
       <tr id='notFound' class="bg-danger">
-        <td colspan='7' >Nothing found</td>
+        <td class='notFound' colspan='7' >Nothing found</td>
       </tr>
       `
     if (tableBody.childNodes[1].id !== 'notFound'){

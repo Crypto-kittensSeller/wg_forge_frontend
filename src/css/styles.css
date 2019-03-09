@@ -1,7 +1,45 @@
 div.user-details {
-    display: none;
+  display: none;
 }
 
 .clickable:hover {
 	cursor: pointer;
+}
+
+thead tr:nth-child(1) {
+  text-align: center;
+}
+
+thead tr:nth-child(2) th:nth-child(1) {
+  text-align: center;
+}
+
+td {
+	text-align: start;
+}
+
+.card_number {
+	text-align: center;
+}
+
+.order_price-js {
+	text-align: end;
+}
+
+.order_date {
+	text-align: center;
+}
+
+.statistics-js td:nth-child(1) {
+	text-align: end;
+	font-weight: 600;
+}
+
+.statistics-js td:nth-child(2) {
+	text-align: center;
+	font-weight: 600;
+}
+
+.notFound {
+	text-align: center;
 }
